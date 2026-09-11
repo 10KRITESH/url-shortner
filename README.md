@@ -31,10 +31,9 @@ graph TD
 -   **Shorten URLs**: Quickly generate short, shareable links.
 -   **Custom Aliases**: Create easy-to-remember custom URLs (e.g., `link.com/my-portfolio`).
 -   **Link Expiration**: Set expiration dates for links (optional).
--   **Comprehensive Analytics**:
+-   **Analytics & Trends**:
     -   Total click counts.
-    -   Geographic data (Click by country).
-    -   Device & Browser tracking.
+    -   Clicks over time (30-day timeline visualization).
 -   **User Dashboard**: Manage your links, see stats, and delete old URLs.
 -   **Secure Authentication**: JWT-based login and registration.
 -   **Rate Limiting**: Protection against brute-force and spam.
@@ -56,7 +55,7 @@ graph TD
 -   **Framework**: Express.js
 -   **Database**: PostgreSQL
 -   **Auth**: JSON Web Tokens (JWT) & bcrypt
--   **Middlewares**: CORS, Express Rate Limit, User Agent Parser.
+-   **Middlewares**: CORS, Express Rate Limit.
 
 ### Infrastructure
 -   **Containerization**: Docker & Docker Compose
@@ -139,7 +138,4 @@ The system uses three primary tables:
 ---
 
 
----
-
-Developed by [Your Name/Handle]
-
+Developed by [Kritesh Goud](https://github.com/10KRITESH)
