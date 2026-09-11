@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getAnalytics, getDeviceAnalytics, getCountryAnalytics } from '../api';
-import { ClicksOverTimeChart, DeviceChart, CountryChart } from '../components/StatsChart';
+import { getAnalytics } from '../api';
+import { ClicksOverTimeChart } from '../components/StatsChart';
 import { HiOutlineArrowLeft } from 'react-icons/hi';
 
 const Analytics = () => {
@@ -11,8 +11,6 @@ const Analytics = () => {
     const navigate = useNavigate();
 
     const [analytics, setAnalytics] = useState(null);
-    const [devices, setDevices] = useState([]);
-    const [countries, setCountries] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -20,20 +18,13 @@ const Analytics = () => {
             navigate('/auth');
             return;
         }
-        fetchAllData();
+        fetchData();
     }, [code, isAuthenticated]);
 
-    const fetchAllData = async () => {
+    const fetchData = async () => {
         try {
-            const [analyticsRes, devicesRes, countriesRes] = await Promise.all([
-                getAnalytics(code),
-                getDeviceAnalytics(code),
-                getCountryAnalytics(code),
-            ]);
-
-            setAnalytics(analyticsRes.data);
-            setDevices(devicesRes.data.devices);
-            setCountries(countriesRes.data.countries);
+            const { data } = await getAnalytics(code);
+            setAnalytics(data);
         } catch (err) {
             console.error('Failed to fetch analytics:', err);
         } finally {
@@ -76,19 +67,11 @@ const Analytics = () => {
                     <div className="analytics-header-url">{analytics.url.originalUrl}</div>
                 </div>
 
-                {/* Total Clicks */}
+                {/* Total Stats */}
                 <div className="dashboard-stats animate-in">
                     <div className="stat-card">
                         <div className="stat-card-label">Total Clicks</div>
                         <div className="stat-card-value">{analytics.totalClicks}</div>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-card-label">Devices Tracked</div>
-                        <div className="stat-card-value">{devices.length}</div>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-card-label">Countries Reached</div>
-                        <div className="stat-card-value">{countries.length}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-card-label">Created</div>
@@ -100,23 +83,19 @@ const Analytics = () => {
                             })}
                         </div>
                     </div>
+                    <div className="stat-card">
+                        <div className="stat-card-label">Status</div>
+                        <div className="stat-card-value" style={{ fontSize: '1rem', color: 'var(--success, #10b981)' }}>
+                            Active
+                        </div>
+                    </div>
                 </div>
 
                 {/* Charts */}
-                <div className="analytics-grid animate-in">
+                <div className="analytics-grid animate-in" style={{ gridTemplateColumns: '1fr' }}>
                     <div className="analytics-chart-card full-width">
                         <div className="analytics-chart-title">📈 Clicks Over Time (Last 30 Days)</div>
                         <ClicksOverTimeChart data={analytics.clicksOverTime} />
-                    </div>
-
-                    <div className="analytics-chart-card">
-                        <div className="analytics-chart-title">📱 Device Breakdown</div>
-                        <DeviceChart data={devices} />
-                    </div>
-
-                    <div className="analytics-chart-card">
-                        <div className="analytics-chart-title">🌍 Top Countries</div>
-                        <CountryChart data={countries} />
                     </div>
                 </div>
             </div>

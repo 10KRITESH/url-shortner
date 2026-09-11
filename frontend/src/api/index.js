@@ -52,10 +52,4 @@ export const deleteUrl = (code) =>
 export const getAnalytics = (code) =>
     api.get(`/analytics/${code}`);
 
-export const getDeviceAnalytics = (code) =>
-    api.get(`/analytics/${code}/devices`);
-
-export const getCountryAnalytics = (code) =>
-    api.get(`/analytics/${code}/countries`);
-
 export default api;

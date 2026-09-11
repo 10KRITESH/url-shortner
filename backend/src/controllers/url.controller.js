@@ -1,7 +1,5 @@
 import pool from '../config/db.js';
 import generateCode from '../utils/generateCode.js';
-import { parseUserAgent } from '../utils/parseUserAgent.js';
-import geoip from 'geoip-lite';
 
 // POST /api/urls/shorten — create a short URL
 export const shortenUrl = async (req, res) => {
@@ -145,23 +143,9 @@ export const redirectUrl = async (req, res) => {
             return res.status(410).json({ error: 'This link has expired.' });
         }
 
-        // Log click asynchronously — don't make the user wait
-        const userAgent = req.headers['user-agent'] || '';
-        const { device, browser } = parseUserAgent(userAgent);
-
-        // Get IP address
-        const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || '';
-
-        // Geo lookup
-        const geo = geoip.lookup(ip);
-        const country = geo?.country || 'Unknown';
-
-        // Fire and forget — async click logging
-        pool.query(
-            `INSERT INTO clicks (url_id, country, device, browser, ip_address)
-       VALUES ($1, $2, $3, $4, $5)`,
-            [url.id, country, device, browser, ip]
-        ).catch(err => console.error('Click log error:', err.message));
+        // Log click asynchronously — fire-and-forget without blocking redirect
+        pool.query('INSERT INTO clicks (url_id) VALUES ($1)', [url.id])
+            .catch(err => console.error('Click log error:', err.message));
 
         // 302 redirect
         res.redirect(302, url.original_url);

@@ -24,11 +24,7 @@ CREATE TABLE IF NOT EXISTS urls (
 CREATE TABLE IF NOT EXISTS clicks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   url_id UUID REFERENCES urls(id) ON DELETE CASCADE,
-  clicked_at TIMESTAMP DEFAULT NOW(),
-  country VARCHAR(100),
-  device VARCHAR(50),
-  browser VARCHAR(50),
-  ip_address VARCHAR(50)
+  clicked_at TIMESTAMP DEFAULT NOW()
 );
 
 -- Indexes for performance
