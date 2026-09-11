@@ -1,6 +1,6 @@
 # 🚀 URL Shortener & Analytics Platform
 
-A modern, full-stack URL shortening service built with **React**, **Node.js**, and **PostgreSQL**. This platform provides secure URL shortening, custom aliases, and detailed real-time analytics for every link.
+A full-stack URL shortening service built with **React**, **Node.js**, and **PostgreSQL**. Generate short links, track clicks over time, and manage all your links from a clean dashboard.
 
 ---
 
@@ -37,7 +37,6 @@ graph TD
 -   **User Dashboard**: Manage your links, see stats, and delete old URLs.
 -   **Secure Authentication**: JWT-based login and registration.
 -   **Rate Limiting**: Protection against brute-force and spam.
--   **Docker Ready**: Fully containerized for easy deployment.
 
 ---
 
@@ -57,10 +56,6 @@ graph TD
 -   **Auth**: JSON Web Tokens (JWT) & bcrypt
 -   **Middlewares**: CORS, Express Rate Limit.
 
-### Infrastructure
--   **Containerization**: Docker & Docker Compose
--   **Production Proxy**: Nginx (configured for frontend)
-
 ---
 
 ## 📂 Project Structure
@@ -68,13 +63,13 @@ graph TD
 ```text
 ├── backend/
 │   ├── src/
-│   │   ├── config/         # Database and app configuration
+│   │   ├── config/         # Database configuration
 │   │   ├── controllers/    # Request handlers (logic)
-│   │   ├── middleware/     # Auth and validation guards
-│   │   ├── models/         # SQL schemas and migration files
+│   │   ├── middleware/     # Auth guards
+│   │   ├── models/         # SQL schemas
 │   │   ├── routes/         # Express API endpoints
-│   │   └── utils/          # Helper functions (code generation, parsing)
-│   └── Dockerfile          # Backend container config
+│   │   └── utils/          # Helper functions
+│   └── .env                # Environment variables
 ├── frontend/
 │   ├── src/
 │   │   ├── api/            # API service calls
@@ -82,8 +77,8 @@ graph TD
 │   │   ├── context/        # Global state (Auth)
 │   │   ├── pages/          # Main application views
 │   │   └── index.css       # Core design system
-│   └── Dockerfile          # Frontend container config
-└── docker-compose.yml      # Service orchestration
+│   └── vite.config.js      # Vite dev server & proxy config
+└── README.md
 ```
 
 ---
@@ -91,34 +86,50 @@ graph TD
 ## 🚀 Getting Started
 
 ### Prerequisites
--   [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
--   Node.js (Optional, if running outside Docker).
+-   [Node.js](https://nodejs.org/) (v18 or higher)
+-   [PostgreSQL](https://www.postgresql.org/) running locally
 
-### Running with Docker (Recommended)
+### 1. Clone the repository
+```bash
+git clone https://github.com/10KRITESH/url-shortner.git
+cd url-shortner
+```
 
-1.  **Clone the repository**:
-    ```bash
-    git clone https://github.com/10KRITESH/url-shortner.git
-    cd url-shortner
-    ```
+### 2. Set up the Database
+Create a PostgreSQL database and run the schema:
+```bash
+psql -U postgres -c "CREATE DATABASE urlshortener;"
+psql -U postgres -d urlshortener -f backend/src/models/schema.sql
+```
 
-2.  **Setup Environment Variables**:
-    Create a `.env` file in the root directory:
-    ```env
-    POSTGRES_DB=url_shortener
-    POSTGRES_USER=postgres
-    POSTGRES_PASSWORD=your_password
-    JWT_SECRET=your_super_secret_key
-    ```
+### 3. Configure Environment Variables
+Create a `.env` file inside the `backend/` folder:
+```env
+POSTGRES_URL=postgresql://postgres:your_password@localhost:5432/urlshortener
+JWT_SECRET=your_super_secret_key
+PORT=5000
+BASE_URL=http://localhost:3000
+```
 
-3.  **Start the services**:
-    ```bash
-    docker-compose up --build
-    ```
+### 4. Start the Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
 
-4.  **Access the application**:
-    -   Frontend: `http://localhost:3000`
-    -   Backend API: `http://localhost:5000`
+### 5. Start the Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 6. Access the application
+-   **Frontend**: `http://localhost:3000`
+-   **Backend API**: `http://localhost:5000`
+
+> The frontend's Vite dev server automatically proxies `/api` requests to the backend on port 5000.
 
 ---
 
@@ -126,16 +137,15 @@ graph TD
 
 -   **Password Hashing**: Bcrypt is used for secure password storage.
 -   **Protected Routes**: Sensitive API actions require a valid JWT bearer token.
--   **Standard Headers**: Rate limiting and CORS are configured to protect against common web vulnerabilities.
+-   **Rate Limiting**: 100 requests per 15 minutes per IP on all API endpoints.
 
 ## 📈 Database Schema
 
-The system uses three primary tables:
-1.  `users`: Stores user credentials and profile info.
+The system uses three tables:
+1.  `users`: Stores user credentials.
 2.  `urls`: Stores original URLs, short codes, and associations.
-3.  `clicks`: Stores analytics data for every redirection.
+3.  `clicks`: Stores a timestamp record for every redirect.
 
 ---
-
 
 Developed by [Kritesh Goud](https://github.com/10KRITESH)
